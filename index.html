@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            transition: background-color 0.5s;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #message {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .win {
+            background-color: #d4edda;
+        }
+        .lose {
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #4CAF50;">Guess the Number (1-100)</h1>
+    <p id="message"></p>
+    <input id="guess-input" type="number">
+    <button id="guess-btn">Guess</button>
+    <button id="reset-btn" style="display: none;">Play Again</button>
+    <p id="attempts-left" style="color: #666;">Attempts left: 10</p>
+
+    <script>
+        let secretNumber = Math.floor(Math.random() * 100) + 1;
+        let attemptsLeft = 10;
+
+        document.getElementById('guess-btn').addEventListener('click', checkGuess);
+        document.getElementById('guess-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkGuess();
+            }
+        });
+        document.getElementById('reset-btn').addEventListener('click', resetGame);
+
+        function checkGuess() {
+            const guess = Number(document.getElementById('guess-input').value);
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                document.getElementById('message').textContent = "Enter a number between 1 and 100!";
+                document.getElementById('message').style.color = "#ff9800";
+                return;
+            }
+
+            attemptsLeft--;
+            document.getElementById('guess-input').value = '';
+
+            if (guess < secretNumber) {
+                document.getElementById('message').textContent = "Higher";
+                document.getElementById('message').style.color = "#ff9800";
+            } else if (guess > secretNumber) {
+                document.getElementById('message').textContent = "Lower";
+                document.getElementById('message').style.color = "#ff9800";
+            } else {
+                document.getElementById('message').textContent = `You Win! The number was ${secretNumber}`;
+                document.getElementById('message').style.color = "#4CAF50";
+                document.body.classList.add('win');
+                endGame();
+            }
+
+            document.getElementById('attempts-left').textContent = `Attempts left: ${attemptsLeft}`;
+            if (attemptsLeft === 0 && guess !== secretNumber) {
+                document.getElementById('message').textContent = `Game Over! The number was ${secretNumber}`;
+                document.getElementById('message').style.color = "#f44336";
+                document.body.classList.add('lose');
+                endGame();
+            }
+        }
+
+        function endGame() {
+            document.getElementById('guess-btn').disabled = true;
+            document.getElementById('reset-btn').style.display = 'inline-block';
+        }
+
+        function resetGame() {
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            attemptsLeft = 10;
+            document.getElementById('message').textContent = '';
+            document.getElementById('attempts-left').textContent = 'Attempts left: 10';
+            document.getElementById('guess-btn').disabled = false;
+            document.getElementById('reset-btn').style.display = 'none';
+            document.body.classList.remove('win', 'lose');
+        }
+    </script>
+</body>
+</html>
